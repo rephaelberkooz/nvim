@@ -13,6 +13,3 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 vim.keymap.set("n", "<leader>/", ":noh<CR>")
-
-vim.cmd[[nmap ; <C-w>]]
--- TODO: Rebind all the window keys
