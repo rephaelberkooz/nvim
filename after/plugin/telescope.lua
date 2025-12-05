@@ -3,6 +3,7 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find f
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+vim.keymap.set('n', '<leader><leader>', builtin.git_files, { desc = 'Telescope fuzzy git' })
 
 
 vim.keymap.set(
@@ -17,3 +18,6 @@ vim.keymap.set(
 
 
 -- vim.keymap.set("n", "<space>fb", ":Telescope file_browser<CR>")
+--
+--
+require('telescope').load_extension('fzy_native')
