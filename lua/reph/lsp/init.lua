@@ -29,11 +29,21 @@ local coq = require("coq")
 --   }
 -- }))
 
-vim.lsp.config('ty', coq.lsp_ensure_capabilities({
-    settings = {
-        ty = {}
+local ty_config = {
+    root_markers = { '.git', 'pyproject.toml' },
+}
+if vim.fn.getcwd():find("nuclei-compliance", 1, true) then
+    ty_config.settings = {
+        ty = {
+            configuration = {
+                environment = {
+                    ["extra-paths"] = { "nuclei-compliance/shared/" }
+                }
+            }
+        }
     }
-}))
+end
+vim.lsp.config('ty', coq.lsp_ensure_capabilities(ty_config))
 vim.lsp.enable('ty')
 
 vim.lsp.config('ts_ls', coq.lsp_ensure_capabilities({

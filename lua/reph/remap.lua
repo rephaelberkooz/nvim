@@ -16,3 +16,5 @@ vim.keymap.set("n", "<leader>/", ":noh<CR>")
 
 vim.keymap.set({'i', 'v', 'c', 'o'}, 'jk', '<Esc>', { desc = 'Exit to normal mode with jk' })
 vim.keymap.set({'i', 'v', 'c', 'o'}, 'kj', '<Esc>', { desc = 'Exit to normal mode with kj' })
+
+vim.keymap.set("n", "<leader>cf", ':let @+=@%<CR>', { desc = 'Copy file path'})
