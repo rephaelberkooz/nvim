@@ -7,7 +7,12 @@ require'nvim-treesitter.configs'.setup {
 
   -- Automatically install missing parsers when entering buffer
   -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  auto_install = true,
+  -- Set to false: the `tree-sitter` CLI is not installed, so auto-installing a
+  -- missing parser (e.g. `latex` when opening a .tex file) threw mid-FileType
+  -- and aborted the autocmd chain *before* `:syntax` ran -- leaving buffers with
+  -- no highlighting at all. With this off, filetypes without a TS parser simply
+  -- fall back to Vim's regex syntax (for .tex, that's vimtex's rich LaTeX syntax).
+  auto_install = false,
 
   -- List of parsers to ignore installing (or "all")
   -- ignore_install = { "javascript" },

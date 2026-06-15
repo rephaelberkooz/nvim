@@ -60,15 +60,21 @@ vim.lsp.config('eslint', coq.lsp_ensure_capabilities({}))
 vim.lsp.enable('eslint')
 
 
-local rt = require("rust-tools")
-
-rt.setup({
-  server = {
-    on_attach = function(_, bufnr)
-      -- Hover actions
-      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
-      -- Code action groups
-      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
-    end,
-  },
-})
+-- NOTE: rust-tools.nvim (simrat39) is unmaintained and still uses the old
+-- `require('lspconfig')` framework, which nvim-lspconfig now raises an error on
+-- (nvim 0.11+). That throw was aborting this whole module mid-load and taking
+-- the other LSP servers (ty / ts_ls / eslint) down with it. Commented out for
+-- now. If you need Rust again, migrate to `mrcjkb/rustaceanvim`.
+--
+-- local rt = require("rust-tools")
+--
+-- rt.setup({
+--   server = {
+--     on_attach = function(_, bufnr)
+--       -- Hover actions
+--       vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+--       -- Code action groups
+--       vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+--     end,
+--   },
+-- })

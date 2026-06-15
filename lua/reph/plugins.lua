@@ -46,6 +46,7 @@ return {
             { '<leader>s', group = '[S]earch' },
             { '<leader>t', group = '[T]oggle' },
             { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+            { '<leader>l', group = '[L]aTeX' },
           },
         },
     },
@@ -170,6 +171,41 @@ return {
         ---@module 'render-markdown'
         ---@type render.md.UserConfig
         opts = {},
-    }
-    
+    },
+    { -- LaTeX / Beamer: editing, compilation, and live preview via Skim.
+      -- The vimtex author recommends NOT lazy-loading the plugin, and all
+      -- `vimtex_*` globals must be set BEFORE the plugin loads -- hence `init`.
+      "lervag/vimtex",
+      lazy = false,
+      init = function()
+        -- PDF viewer: Skim is the macOS standard (auto-reload + SyncTeX).
+        vim.g.vimtex_view_method = "skim"
+        vim.g.vimtex_view_skim_sync = 1     -- after compile, jump Skim to the edited line
+        vim.g.vimtex_view_skim_activate = 1 -- bring Skim to the foreground after compile
+
+        -- Compiler: latexmk in continuous mode (`-pvc`) is what makes preview
+        -- "live" -- it watches the .tex and recompiles on every save.
+        vim.g.vimtex_compiler_method = "latexmk"
+
+        -- Keep build artifacts out of your source dir.
+        vim.g.vimtex_compiler_latexmk = {
+          aux_dir = "build",
+          out_dir = "build",
+          options = {
+            "-verbose",
+            "-file-line-error",
+            "-synctex=1",          -- required for forward/inverse search
+            "-interaction=nonstopmode",
+          },
+        }
+
+        -- Don't hijack focus with the quickfix window on mere warnings
+        -- (LaTeX emits many); it still opens on real errors via <leader>le.
+        vim.g.vimtex_quickfix_mode = 0
+
+        -- vimtex's own mappings stay under <localleader>l (localleader = `\`),
+        -- e.g. \ll compile, \lv view. The <leader>l maps in after/ftplugin/tex.lua
+        -- are an additional, discoverable set surfaced through which-key.
+      end,
+    },
 }
