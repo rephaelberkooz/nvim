@@ -22,12 +22,22 @@
 --     `brew install tree-sitter-cli`; without it, `install()` fails to build
 --     non-bundled parsers (js/ts) and spams errors on every startup.
 --
--- Parsers to install (async; a no-op if already present). Equivalent to the old
--- `ensure_installed`. `latex` is intentionally omitted so .tex files keep
--- vimtex's rich regex syntax instead of the treesitter LaTeX parser.
+-- Parsers to install (async; a no-op if already present). On `main`, install()
+-- fetches each parser AND its matching highlight/injection queries, so a language
+-- must be listed here to get full treesitter highlighting (otherwise it silently
+-- falls back to regex, or -- as with .tsx using the plain `typescript` parser --
+-- highlights only part of the buffer).
+--
+-- This mirrors the full set previously installed under `master` (via
+-- `ensure_installed` + `:TSInstall` over time). `latex` stays omitted on purpose
+-- so .tex files keep vimtex's rich regex syntax instead of the treesitter parser.
 require("nvim-treesitter").install({
-  "javascript", "typescript", "c", "lua", "vim", "vimdoc", "query",
-  "markdown", "markdown_inline",
+  "bash", "c", "csv", "diff", "dockerfile", "gitignore",
+  "go", "gomod", "html", "ini", "javascript", "jinja",
+  "json", "lua", "markdown", "markdown_inline",
+  "python", "query", "requirements", "sql", "ssh_config",
+  "tmux", "toml", "tsx", "typescript", "vim", "vimdoc",
+  "xml", "yaml",
 })
 
 -- Enable treesitter highlighting per buffer. Replaces the old `highlight` block.
