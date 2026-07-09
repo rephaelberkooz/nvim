@@ -12,13 +12,13 @@ return {
     },
     {
        "nvim-treesitter/nvim-treesitter",
-       branch = 'master',
+       branch = 'main',
        lazy = false,
-       build = ":TSUpdate"  
+       build = ":TSUpdate"
     },
-    {
-       "nvim-treesitter/playground"
-    },
+    -- {
+    --    "nvim-treesitter/playground"
+    -- },
     -- {
     --     "nvim-telescope/telescope-file-browser.nvim",
     --     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
@@ -60,16 +60,13 @@ return {
       },
       init = function()
         vim.g.coq_settings = {
-          auto_start = 'shut-up',
+          -- coq v2 auto-starts whenever coq_settings is set (no more auto_start).
           keymap = {
             recommended = true,
-            jump_to_mark = '<c-k>',
           },
           display = {
             pum = {
-              fast_close = false,
               source_context = {"[", "]"},
-              kind_context = {"[", "]"},
             },
             preview = {
               border = "rounded",
@@ -84,7 +81,6 @@ return {
             },
             snippets = {
               enabled = true,
-              warn = {},
               weight_adjust = 1.5,
               short_name = "SNIP",
             },

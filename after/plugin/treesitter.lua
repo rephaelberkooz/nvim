@@ -1,46 +1,45 @@
-require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all" (the listed parsers MUST always be installed)
-  ensure_installed = { "javascript", "typescript", "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+-- Treesitter setup — nvim-treesitter `main` branch API (Neovim 0.12+).
+--
+-- WHY THIS LOOKS DIFFERENT NOW (migration notes):
+--   After upgrading to Neovim 0.12, the old setup on the `master` branch started
+--   crashing: render-markdown parsing markdown code-block injections hit
+--   `attempt to call method 'range' (a nil value)` inside nvim-treesitter's
+--   `set-lang-from-info-string!` query directive. The `master` branch is frozen
+--   and will not be fixed for 0.12, so we moved to the `main` branch
+--   (`branch = 'main'` in lua/reph/plugins.lua), whose queries/directives are
+--   0.12-compatible.
+--
+-- WHAT CHANGED BETWEEN THE TWO BRANCHES:
+--   * `master` used `require('nvim-treesitter.configs').setup{ ensure_installed,
+--     highlight = { enable = true }, ... }`. That module DOES NOT EXIST on `main`
+--     (hence the earlier "module 'nvim-treesitter.configs' not found" error).
+--   * On `main` you instead: (1) install parsers explicitly with
+--     `require('nvim-treesitter').install{...}`, and (2) turn on highlighting per
+--     buffer via Neovim's built-in `vim.treesitter.start()` (there is no
+--     plugin-managed `highlight` option anymore).
+--   * `main` compiles parsers with the `tree-sitter` CLI (unlike `master`, which
+--     shipped precompiled parsers). We installed it once via
+--     `brew install tree-sitter-cli`; without it, `install()` fails to build
+--     non-bundled parsers (js/ts) and spams errors on every startup.
+--
+-- Parsers to install (async; a no-op if already present). Equivalent to the old
+-- `ensure_installed`. `latex` is intentionally omitted so .tex files keep
+-- vimtex's rich regex syntax instead of the treesitter LaTeX parser.
+require("nvim-treesitter").install({
+  "javascript", "typescript", "c", "lua", "vim", "vimdoc", "query",
+  "markdown", "markdown_inline",
+})
 
-  -- Install parsers synchronously (only applied to `ensure_installed`)
-  sync_install = false,
-
-  -- Automatically install missing parsers when entering buffer
-  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  -- Set to false: the `tree-sitter` CLI is not installed, so auto-installing a
-  -- missing parser (e.g. `latex` when opening a .tex file) threw mid-FileType
-  -- and aborted the autocmd chain *before* `:syntax` ran -- leaving buffers with
-  -- no highlighting at all. With this off, filetypes without a TS parser simply
-  -- fall back to Vim's regex syntax (for .tex, that's vimtex's rich LaTeX syntax).
-  auto_install = false,
-
-  -- List of parsers to ignore installing (or "all")
-  -- ignore_install = { "javascript" },
-
-  ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-  -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
-
-  highlight = {
-    enable = true,
-
-    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-    -- the name of the parser)
-    -- list of language that will be disabled
-    disable = { "c", "rust" },
-    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-    disable = function(lang, buf)
-        local max_filesize = 100 * 1024 -- 100 KB
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
-    end,
-
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
-}
+-- Enable treesitter highlighting per buffer. Replaces the old `highlight` block.
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function(ev)
+    -- Was `highlight.disable`: skip treesitter on very large files.
+    local max_filesize = 100 * 1024 -- 100 KB
+    local ok, stats = pcall((vim.uv or vim.loop).fs_stat, vim.api.nvim_buf_get_name(ev.buf))
+    if ok and stats and stats.size > max_filesize then
+      return
+    end
+    -- pcall guards filetypes without an installed parser (e.g. tex -> vimtex).
+    pcall(vim.treesitter.start, ev.buf)
+  end,
+})

@@ -43,20 +43,19 @@ if vim.fn.getcwd():find("nuclei-compliance", 1, true) then
         }
     }
 end
-vim.lsp.config('ty', coq.lsp_ensure_capabilities(ty_config))
+-- vim.lsp.config('ty', coq.lsp_ensure_capabilities(ty_config))
 vim.lsp.enable('ty')
 
-vim.lsp.config('ts_ls', coq.lsp_ensure_capabilities({
-  on_attach = function(client, bufnr)
-    client.server_capabilities.completionProvider = {
-      resolveProvider = true,
-      triggerCharacters = { ".", "(", "[" }
-    }
-  end,
-}))
+-- vim.lsp.config('ts_ls', coq.lsp_ensure_capabilities({
+--   on_attach = function(client, bufnr)
+--     client.server_capabilities.completionProvider = {
+--       resolveProvider = true,
+--       triggerCharacters = { ".", "(", "[" }
+--     }
+--   end,
+-- }))
 vim.lsp.enable('ts_ls')
 
-vim.lsp.config('eslint', coq.lsp_ensure_capabilities({}))
 vim.lsp.enable('eslint')
 
 

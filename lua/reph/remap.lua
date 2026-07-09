@@ -18,3 +18,11 @@ vim.keymap.set({'i', 'v', 'c', 'o'}, 'jk', '<Esc>', { desc = 'Exit to normal mod
 vim.keymap.set({'i', 'v', 'c', 'o'}, 'kj', '<Esc>', { desc = 'Exit to normal mode with kj' })
 
 vim.keymap.set("n", "<leader>cf", ':let @+=@%<CR>', { desc = 'Copy file path'})
+
+-- coq v2 drops keymap.jump_to_mark in favor of Neovim's built-in vim.snippet.
+-- Jump forward through snippet placeholders (was coq v1's <c-k>).
+vim.keymap.set({ "i", "s" }, "<c-k>", function()
+  if vim.snippet.active({ direction = 1 }) then
+    vim.snippet.jump(1)
+  end
+end, { desc = 'Snippet: jump to next placeholder' })
