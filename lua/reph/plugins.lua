@@ -1,6 +1,10 @@
 return {
     {
-        'nvim-telescope/telescope.nvim', tag = '0.1.8',
+        -- v0.2.x drops the old nvim-treesitter dependency (uses Neovim core
+        -- `vim.treesitter.language.get_lang`); 0.1.8's previewer called the
+        -- removed `nvim-treesitter.parsers.ft_to_lang`, which broke on the
+        -- treesitter `main` branch. Requires Neovim > 0.10.4.
+        'nvim-telescope/telescope.nvim', tag = 'v0.2.2',
           dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope-fzy-native.nvim' }
     },
     {
