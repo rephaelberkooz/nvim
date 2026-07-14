@@ -51,6 +51,7 @@ return {
             { '<leader>t', group = '[T]oggle' },
             { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
             { '<leader>l', group = '[L]aTeX' },
+            { '<leader>m', group = '[M]arkdown' },
           },
         },
     },
@@ -171,6 +172,24 @@ return {
         ---@module 'render-markdown'
         ---@type render.md.UserConfig
         opts = {},
+    },
+    { -- Markdown live preview in a web browser (synced scroll, auto-refresh).
+      -- Complements render-markdown.nvim (in-buffer) with a full HTML render.
+      -- Buffer-local maps live in after/ftplugin/markdown.lua.
+      'iamcco/markdown-preview.nvim',
+      cmd = { 'MarkdownPreview', 'MarkdownPreviewStop', 'MarkdownPreviewToggle' },
+      ft = { 'markdown' },
+      -- Install the preview server's node deps so it runs from source via
+      -- `node app/index.js` (the plugin's fallback when no prebuilt binary
+      -- exists). Uses npm because this machine has node/npm but not yarn, and
+      -- avoids the `mkdp#util#install()` build fn, which throws E117 under lazy
+      -- (autoload isn't sourced yet at build time). If the browser preview ever
+      -- fails to open, re-run `:Lazy build markdown-preview.nvim`.
+      build = 'cd app && npm install --no-audit --no-fund',
+      init = function()
+        -- Keep the browser tab open when you switch away from the .md buffer.
+        vim.g.mkdp_auto_close = 0
+      end,
     },
     { -- LaTeX / Beamer: editing, compilation, and live preview via Skim.
       -- The vimtex author recommends NOT lazy-loading the plugin, and all
