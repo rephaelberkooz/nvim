@@ -5,4 +5,8 @@ require("reph.lsp")
 
 
 require("mason").setup()
-require("mason-lspconfig").setup()
+-- ts_ls / eslint are enabled in reph/lsp; mason supplies their binaries so they
+-- survive asdf node version bumps (npm -g installs are per-node-version).
+require("mason-lspconfig").setup({
+    ensure_installed = { "ts_ls", "eslint" },
+})
